@@ -1,5 +1,12 @@
 # HomePage-haara 🏠
-Tässä haarassa on kotisivun mockup-suunnitelmat kuvina ja figma-tiedostona
+Tässä haarassa on kotisivuun/etusivuun tarvittavat koodit + navbar koodi, mockup-suunnitelmat kuvina ja figma-tiedostona.
+
+## Tämänhetkinen UI
+![etusivu-pc](docs\Pictures\current-ui-pc.png)
+![etusivu-mobile](docs\Pictures\current-ui-mobile.png)
+
+
+## Ensimmäiset mockupit
 
 Puhelin mockup: 
 [Linkki Figmaan (view only)](https://www.figma.com/file/yGF5UFAHudsEJzb71b8P0J/SmartHome-Android-Large-Original?type=design&node-id=2%3A5436&mode=design&t=9FHa9eacfOtBUwKS-1)
@@ -14,7 +21,5 @@ PC mockup (?):
 Tieto | Syöttötapa | Lähde |
 |---|---|---|
 Sähkön nykyinen tuntihinta💲| Automaattinen, API | https://porssisahko.net
-Tuulen nopeus 🍃 | Automaattinen, API | https://fmi.fi
-Lämpötila 🌡️ | Automaattinen, API | https://fmi.fi
-
-Tietovarastona sivun suunnittelun aikana on JavaScript-sanakirja, johon arvot on kirjoitettu suoraan ohjelmakoodiin `app.js`:n reititysosaan.
+Alin hinta tänään⬇️| Automaattinen, omasta tietokannasta | https://porssisahko.net
+Ylin hinta tänään⬆️| Automaattinen, omasta tietokannasta | https://porssisahko.net
