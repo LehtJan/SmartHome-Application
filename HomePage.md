@@ -2,8 +2,8 @@
 Tässä haarassa on kotisivuun/etusivuun tarvittavat koodit + navbar koodi, mockup-suunnitelmat kuvina ja figma-tiedostona.
 
 ## Tämänhetkinen UI
-![etusivu-pc](docs\Pictures\current-ui-pc.png)
-![etusivu-mobile](docs\Pictures\current-ui-mobile.png)
+![etusivu-pc](https://github.com/LehtJan/SmartHome-Application/blob/HomePage/docs/Pictures/current-ui-pc.png))
+![etusivu-mobile](https://github.com/LehtJan/SmartHome-Application/blob/HomePage/docs/Pictures/current-ui-mobile.png))
 
 
 ## Ensimmäiset mockupit
