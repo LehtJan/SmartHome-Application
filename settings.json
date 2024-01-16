@@ -1,0 +1,14 @@
+{
+  "database": {
+    "user": "x",
+    "password": "x",
+    "host": "x",
+    "database": "x",
+    "port": 5432
+  },
+  "scheduler": {
+    "priceTimepattern": "*/1 * * * *",
+    "weatherTimepattern": "*/1 * * * *"
+  },
+  "lastFetchedPriceDate": "15/01/2024"
+}

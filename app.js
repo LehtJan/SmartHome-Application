@@ -4,61 +4,32 @@
 // KIRJASTOJEN LATAUKSET
 // ---------------------
 
-// Ladataan tarvittavat Express kirjastot
-const express = require('express')
+const express = require('express') // Express web server framework
 const { engine } = require('express-handlebars')
 
-const { Pool } = require('pg')
-
+const { Pool } = require('pg') // Postgres kirjasto
 const fs = require('fs')
 
-// APP SETTINGS
-// ------------
-// Read settings from JSON file
+// APP SETTINGS // Read from 'settings.json' file
+// ---------------------
 const settings = JSON.parse(fs.readFileSync('settings.json', 'utf8'))
 
-const { PriceMicroservices, WeatherMicroservices } = require('./microservices');
-
-// Create a new pool for Postgres connections
+// MICROSERVICES
+// ---------------------
+const { PriceMicroservices } = require('./microservices');
 const pool = new Pool(settings.database);
-
-// Create an instance of the PriceMicroservices class
 const priceMicroservices = new PriceMicroservices(pool);
-
-const weatherMicroservices = new WeatherMicroservices();
 
 // EXPRESS-SOVELLUKSEN ASETUKSET
 // -----------------------------
 
-// Luodaan Express-sovellus ja määritellään kuunneltava TCP-portti ympäristömuuttujasta tai 8080
-const app = express()
+const app = express() // Create Express application
 const PORT = process.env.PORT || 8080
 
-// Määritellään resurssien, kuten css-tiedostojen kansioksi public
-app.use(express.static('public'))
-
-// Määritellään mallineiden käyttöasetukset
+app.use(express.static('public')) // Statics
 app.engine('handlebars', engine())
 app.set('view engine', 'handlebars')
-
-// Määritellään hakemisto, josta näkymät (sivut) löytyvät
-app.set('views', './views')
-
-var Handlebars = require('handlebars');
-
-Handlebars.registerHelper('formatDate', function(dateString) {
-  var date = new Date(dateString);
-  var hours = date.getHours();
-  hours = hours < 10 ? '0'+hours : hours; // Add leading zero to hours
-  var minutes = date.getMinutes();
-  minutes = minutes < 10 ? '0'+minutes : minutes;
-  var strTime = hours + ':' + minutes;
-  return strTime;
-});
-
-Handlebars.registerHelper('json', function(context) {
-  return JSON.stringify(context);
-});
+app.set('views', './views') // Web pages
 
 // REITTIEN MÄÄRITYKSET
 // --------------------
@@ -76,7 +47,6 @@ app.get('/:lang/', (req, res) => {
     .then(([priceResult, tableResult, priceLowest, priceHighest]) => {
       let priceNow = priceResult.rows[0]['price'];
       let tableData = tableResult.rows;
-
       let priceLowestToday = priceLowest.rows[0]['price'];
       let priceHighestToday = priceHighest.rows[0]['price'];
 
@@ -87,10 +57,11 @@ app.get('/:lang/', (req, res) => {
         'priceHighestToday': priceHighestToday,
         'layout': `../${lang}/layouts/main`
       };
-  res.render(`${lang}/index`, data);
+    res.render(`${lang}/index`, data);
   });
 });
 
-// PALVELIMEN KÄYNNISTYS
+// START SERVER
+// --------------------
 app.listen(PORT)
 console.log(`Palvelin kuuntelee porttia ${PORT}`)
