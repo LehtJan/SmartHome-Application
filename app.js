@@ -16,9 +16,24 @@ const settings = JSON.parse(fs.readFileSync('settings.json', 'utf8'))
 
 // MICROSERVICES
 // ---------------------
-const { PriceMicroservices } = require('./microservices');
+const { PriceMicroservices, WeatherMicroservices } = require('./microservices');
 const pool = new Pool(settings.database);
 const priceMicroservices = new PriceMicroservices(pool);
+const weatherMicroservices = new WeatherMicroservices(pool);
+
+var Handlebars = require('handlebars');
+Handlebars.registerHelper('formatDate', function(dateString) {
+  var date = new Date(dateString);
+  var hours = date.getHours();
+  hours = hours < 10 ? '0'+hours : hours; // Add leading zero to hours
+  var minutes = date.getMinutes();
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = hours + ':' + minutes;
+  return strTime;
+});
+Handlebars.registerHelper('json', function(context) {
+  return JSON.stringify(context);
+});
 
 // EXPRESS-SOVELLUKSEN ASETUKSET
 // -----------------------------
@@ -60,7 +75,49 @@ app.get('/:lang/', (req, res) => {
     res.render(`${lang}/index`, data);
   });
 });
-
+app.get('/:lang/general', async (req, res) => {
+  try {
+    const lang = req.params.lang;
+    const priceResult = await priceMicroservices.selectXFromY('price', 'current_prices')
+    const tableResult = await priceMicroservices.selectXFromY('*', 'hourly_page')
+    const averagePriceTodayResult = await priceMicroservices.selectXFromY('average', 'average_price_today')
+    const eveningPriceResult = await priceMicroservices.selectXFromY('price', 'evening_price_today')
+    const lowestPriceTodayResult = await priceMicroservices.selectXFromY('*', 'lowest_price_today')
+    const highestPriceTodayResult = await priceMicroservices.selectXFromY('*', 'highest_price_today')
+    const TemperatureResult = await weatherMicroservices.selectXFromY('temperature', 'current_weather_forecast')
+    const WindResult = await weatherMicroservices.selectXFromY('wind_direction, wind_speed', 'current_weather_forecast')
+    
+    let priceNow = priceResult.rows[0]['price'];
+    let priceEvening = eveningPriceResult.rows[0]['price'];
+    let lowestPriceToday = lowestPriceTodayResult.rows[0]['price'];
+    let lowestPriceTodayTimeslot = lowestPriceTodayResult.rows[0]['timeslot'];
+    let highestPriceToday = highestPriceTodayResult.rows[0]['price'];
+    let highestPriceTodayTimeslot = highestPriceTodayResult.rows[0]['timeslot'];
+    let tableData = tableResult.rows;
+    let averagePriceToday = averagePriceTodayResult.rows[0]['average'];
+    let temperature = TemperatureResult.rows[0]['temperature'];
+    let windDirection = WindResult.rows[0]['wind_direction'];
+    let windSpeed = parseFloat(WindResult.rows[0]['wind_speed']).toFixed(2);
+    
+    let data = {
+      'priceNow': priceNow,
+      'priceEvening': priceEvening,
+      'lowestPriceToday': lowestPriceToday,
+      'lowestPriceTodayTimeslot': lowestPriceTodayTimeslot,
+      'highestPriceToday': highestPriceToday,
+      'highestPriceTodayTimeslot': highestPriceTodayTimeslot,
+      'tableData': tableData,
+      'averagePriceToday': averagePriceToday,
+      'temperature': temperature,
+      'windDirection': windDirection,
+      'windSpeed': windSpeed,
+      'layout': `../${lang}/layouts/main`
+    };
+    res.render(`${lang}/general`, data);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 // START SERVER
 // --------------------
 app.listen(PORT)
