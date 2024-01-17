@@ -184,6 +184,17 @@ app.get('/:lang/spot-prices', async (req, res) => {
     console.error(err.message);
   }
 });
+app.get('/:lang/weather', async (req, res) => {
+  try {
+    const lang = req.params.lang;
+    let data = {
+      'layout': `../${lang}/layouts/main`
+    };
+    res.render(`${lang}/weather`, data);
+  } catch (err) {
+    console.error(err.message);
+  }
+})
 
 // START SERVER
 // --------------------

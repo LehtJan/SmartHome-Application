@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <!-- main container -->
+    <div class="bg-white flex w-full h-full">
+
+        <!-- main content -->
+        <div class="bg-[#EAF0FD] w-full h-full px-1 lg:px-4 xl:px-12 2xl:px-36 lg:py-4 md:py-2">
+
+            <!-- top content -->
+            <div class="w-full flex justify-between">
+                <div class="">
+                    <div class="relative inline-flex w-56">
+                        <select class="rounded-md shadow-md px-3 py-2 w-full cursor-pointer border border-1" id="timePeriod">
+                            <option value="Espoo">Espoo</option>
+                            <option value="Helsinki">Helsinki</option>
+                            <option value="Jyväskylä">Jyväskylä</option>
+                            <option value="Kuopio">Kuopio</option>
+                            <option value="Oulu">Oulu</option>
+                            <option value="Tampere">Tampere</option>
+                            <option value="Turku">Turku</option>
+                            <option value="Vantaa">Vantaa</option>
+                        </select>
+                    </div>
+                </div>
+                <h1 id="clock" class="text-[#19283F] text-xl flex items-center justify-end mr-2 sm:mr-none">
+                </h1>
+            </div>
+
+            <!-- middle content -->
+            <div class="flex mt-10">
+
+                <!-- Today -->
+                <div class="flex-col bg-red-200 w-3/5">
+
+                    <!-- Today & Icon -->
+                    <div class="flex justify-between">
+
+                        <!-- Left -->
+                        <div class="flex-col justify-between">
+                            <h1>Espoo</h1>
+                            <h1>Today</h1>
+                        </div>
+
+                        <!-- Right -->
+                        <div>
+                            <img src="/icons/weather/cloudy.png" alt="icon">
+                        </div>
+                    </div>
+
+                    <!-- Today Hourly -->
+                    <div></div>
+
+                    <!-- Today Conditions -->
+                    <div></div>
+                </div>
+
+                <!-- Next Days -->
+                <div class="flex-col bg-green-100 w-2/5"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // clock
+        window.onload = function() {     
+        
+        // clock
+        function showTime() {
+            // Create a date object containing current timestamp
+            var date = new Date();
+            // Separate hours, minutes and seconds
+            var h = date.getHours();
+            var m = date.getMinutes();
+            var s = date.getSeconds();
+            // Add leading zeros
+            h = (h < 10) ? "0" + h : h;
+            m = (m < 10) ? "0" + m : m;
+            s = (s < 10) ? "0" + s : s;
+            // Build a string for time and put it into h1 named clock
+            var time = h + "." + m + "." + s;
+            document.getElementById("clock").innerHTML = time;
+            // After 1000 ms (1 s) call showTime again
+            setTimeout(showTime, 1000);
+        }
+        showTime();
+        }
+    </script>
+</body>
