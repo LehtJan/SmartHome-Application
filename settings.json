@@ -1,9 +1,9 @@
 {
   "database": {
-    "user": "postgres",
-    "password": "viclin123",
-    "host": "localhost",
-    "database": "smarthome",
+    "user": "x",
+    "password": "x",
+    "host": "x",
+    "database": "x",
     "port": 5432
   },
   "scheduler": {
