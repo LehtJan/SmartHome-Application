@@ -105,7 +105,7 @@
                                 </div>
                                 
                             </div>
-                            <div class="pt-6 sm:pt-0 flex-col xl:mr-32">
+                            <div class="pt-6 sm:pt-0 flex-col sm:mr-12 xl:mr-32">
                                 <!-- Precipitation -->
                                 <div class="flex-col mb-6">
                                     <div class="flex">
@@ -133,10 +133,10 @@
                     <h1 class="font-bold text-xl mb-6">Weather Forecast</h1>
                     <div class="overflow-y-auto scrolling-touch h-[90%]">
                         {{#each nextDays}}
-                        <div class="flex justify-between items-center">
+                        <div class="grid grid-cols-4 justify-between items-center text-center">
                             <h1>{{formatDayName this.timestamp}}</h1>
                             <h1>{{formatDate this.timestamp}}</h1>
-                            <div class="flex items-center justify-center">
+                            <div class="flex justify-left items-center">
                                 <img class="mr-3" src="/icons/weather/cloudy.png" alt="">
                                 <h1 class="font-bold text-lg">{{this.temperature}}°C</h1>
                             </div>
