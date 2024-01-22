@@ -29,8 +29,44 @@ Handlebars.registerHelper('formatDate', function(dateString) {
   var strTime = hours + ':' + minutes;
   return strTime;
 });
+Handlebars.registerHelper('formatHour', function(dateString) {
+  var hour = dateString + ':00';
+  var hours = hour < 10 ? '0'+ hour : hour; // Add leading zero to hours
+  return hours;
+});
+Handlebars.registerHelper('format1Decimal', function(number) {
+  var num = parseFloat(number).toFixed(1);
+  return num;
+});
 Handlebars.registerHelper('json', function(context) {
   return JSON.stringify(context);
+});
+Handlebars.registerHelper('formatWindDegrees', function(degrees) {
+  var deg = degrees;
+  if (deg == 0) {
+    return 'N';
+  } else if (deg > 0 && deg < 90) {
+    return 'NE';
+  } else if (deg == 90) {
+    return 'E';
+  } else if (deg > 90 && deg < 180) {
+    return 'SE';
+  } else if (deg == 180) {
+    return 'S';
+  } else if (deg > 180 && deg < 270) {
+    return 'SW';
+  } else if (deg == 270) {
+    return 'W';
+  } else if (deg > 270 && deg < 360) {
+    return 'NW';
+  } else if (deg == 360) {
+    return 'N';
+  }
+});
+Handlebars.registerHelper('formatDayName', function(timestamp) {
+  var date = new Date(timestamp);
+  var day = date.toLocaleDateString(date.getDay(), { weekday: 'short' });
+  return day;
 });
 
 // EXPRESS-SOVELLUKSEN ASETUKSET
@@ -185,9 +221,23 @@ app.get('/:lang/spot-prices', async (req, res) => {
   }
 });
 app.get('/:lang/weather', async (req, res) => {
+  const lang = req.params.lang;
+  res.redirect(`/${lang}/weather/Helsinki`)
+});
+app.get('/:lang/weather/:city', async (req, res) => {
   try {
     const lang = req.params.lang;
+    let city = req.params.city;
+    if (city == "jyväskylä") {
+      city = "jyvaskyla";
+    }
+    const todayResult = await weatherMicroservices.selectXFromY('*', `today_${city}`)
+    const nowWeatherResult = await weatherMicroservices.selectXFromY('*', `now_weather_${city}`)
+    const nextDaysResult = await weatherMicroservices.selectXFromY('*', `next_days_${city}`)
     let data = {
+      'today': todayResult.rows,
+      'nowWeather': nowWeatherResult.rows,
+      'nextDays': nextDaysResult.rows,
       'layout': `../${lang}/layouts/main`
     };
     res.render(`${lang}/weather`, data);

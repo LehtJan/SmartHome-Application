@@ -12,16 +12,16 @@
     <div class="bg-white flex w-full h-full">
 
         <!-- main content -->
-        <div class="bg-[#EAF0FD] w-full h-full px-1 lg:px-4 xl:px-12 2xl:px-36 lg:py-4 md:py-2">
+        <div class="bg-[#EAF0FD] w-full h-full px-1 lg:px-4 xl:px-12 2xl:px-36 lg:py-4 py-2">
 
             <!-- top content -->
             <div class="w-full flex justify-between">
                 <div class="">
-                    <div class="relative inline-flex w-56">
-                        <select class="rounded-md shadow-md px-3 py-2 w-full cursor-pointer border border-1" id="timePeriod">
+                    <div class="bg-white relative inline-flex w-56">
+                        <select class="rounded-md shadow-md px-3 py-2 w-full cursor-pointer border border-1" id="placeSelection">
                             <option value="Espoo">Espoo</option>
                             <option value="Helsinki">Helsinki</option>
-                            <option value="Jyväskylä">Jyväskylä</option>
+                            <option value="Jyvaskyla">Jyväskylä</option>
                             <option value="Kuopio">Kuopio</option>
                             <option value="Oulu">Oulu</option>
                             <option value="Tampere">Tampere</option>
@@ -35,35 +35,116 @@
             </div>
 
             <!-- middle content -->
-            <div class="flex mt-10">
+            <div class="flex flex-col lg:flex-row mt-10 pb-28">
 
                 <!-- Today -->
-                <div class="flex-col bg-red-200 w-3/5">
+                <div class="flex-col lg:w-3/5">
 
                     <!-- Today & Icon -->
-                    <div class="flex justify-between">
+                    <div class="flex justify-between sm:mx-12 mb-6">
 
                         <!-- Left -->
                         <div class="flex-col justify-between">
-                            <h1>Espoo</h1>
-                            <h1>Today</h1>
+                            {{#each nowWeather}}
+                            <h1 class="text-4xl font-bold">{{this.place}}</h1>
+                            {{/each}}
+                            <h1 class="mt-16 text-3xl font-bold">Today</h1>
                         </div>
 
                         <!-- Right -->
-                        <div>
-                            <img src="/icons/weather/cloudy.png" alt="icon">
+                        <div class="w-36 h-36">
+                            <img src="/icons/weather/sun.svg" alt="weather-now" class="w-full h-full">
                         </div>
                     </div>
 
                     <!-- Today Hourly -->
-                    <div></div>
+                    <div class="mx-2 mb-6 px-6 pt-6 pb-3 bg-white rounded-3xl shadow-md">
+                        <div class="flex text-center overflow-x-auto scrolling-touch pb-3">
+                            <!-- Hourly Cards -->
+                            {{#each today}}
+                            <div class="mr-12">
+                                <div>
+                                    <h1>{{formatHour this.hour}}</h1>
+                                </div>
+                                <div class="w-14 h-14">
+                                    <img src="/icons/weather/sun.svg" alt="" class="w-14 h-14">
+                                </div>
+                                <div>
+                                    <h1 class="font-bold text-lg">{{this.temperature}}°C</h1>
+                                </div>
+                                <div>
+                                    <h1>{{format1Decimal this.wind_speed}}m/s</h1>
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
 
                     <!-- Today Conditions -->
-                    <div></div>
+                    <div class="mx-2 px-6 py-6 bg-white rounded-3xl shadow-md">
+                        <h1 class="font-bold text-xl mb-6">Weather Conditions Now</h1>
+
+                        <div class="flex flex-col sm:flex-row justify-between">
+                            {{#each nowWeather}}
+                            <div class="flex-col">
+                                <!-- Temperature -->
+                                <div class="flex-col mb-6">
+                                    <div class="flex">
+                                        <img src="/icons/weather/temperature.png" alt="" class="w-8 h-8">
+                                        <h1 class="ml-2 text-lg">Temperature</h1>
+                                    </div>
+                                    <h1 class="font-bold text-lg ml-14">{{this.temperature}}°C</h1>
+                                </div>
+                                <!-- Humidity -->
+                                <div class="flex-col">
+                                    <div class="flex">
+                                        <img src="/icons/weather/humidity.png" alt="" class="w-8 h-8">
+                                        <h1 class="ml-2 text-lg">Humidity</h1>
+                                    </div>
+                                    <h1 class="font-bold text-lg ml-14">{{this.humidity}}%</h1>
+                                </div>
+                                
+                            </div>
+                            <div class="pt-6 sm:pt-0 flex-col xl:mr-32">
+                                <!-- Precipitation -->
+                                <div class="flex-col mb-6">
+                                    <div class="flex">
+                                        <img src="/icons/weather/precipitation.png" alt="" class="w-8 h-8">
+                                        <h1 class="ml-2 text-lg">Precipitation</h1>
+                                    </div>
+                                    <h1 class="font-bold text-lg ml-14">{{this.precipitation1h}}mm</h1>
+                                </div>
+                                <!-- Wind Speed + Wind Direction -->
+                                <div class="flex-col">
+                                    <div class="flex">
+                                        <img src="/icons/weather/wind.png" alt="" class="w-8 h-8">
+                                        <h1 class="ml-2 text-lg">Wind Speed & Direction</h1>
+                                    </div>
+                                    <h1 class="font-bold text-lg ml-14">{{format1Decimal this.wind_speed}}m/s, {{format1Decimal this.wind_direction}}° ({{formatWindDegrees this.wind_direction}})</h1>
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Next Days -->
-                <div class="flex-col bg-green-100 w-2/5"></div>
+                <!-- Next Days / Every Other Hour -->
+                <div class="flex-col bg-white rounded-3xl shadow-md lg:ml-6 mt-6 lg:mt-0 py-6 pl-6 lg:w-2/5 h-[625px]">
+                    <h1 class="font-bold text-xl mb-6">Weather Forecast</h1>
+                    <div class="overflow-y-auto scrolling-touch h-[90%]">
+                        {{#each nextDays}}
+                        <div class="flex justify-between items-center">
+                            <h1>{{formatDayName this.timestamp}}</h1>
+                            <h1>{{formatDate this.timestamp}}</h1>
+                            <div class="flex items-center justify-center">
+                                <img class="mr-3" src="/icons/weather/cloudy.png" alt="">
+                                <h1 class="font-bold text-lg">{{this.temperature}}°C</h1>
+                            </div>
+                            <h1 class="mr-3">{{format1Decimal this.wind_speed}}m/s</h1>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -71,7 +152,7 @@
     <script>
         // clock
         window.onload = function() {     
-        
+        document.getElementById('placeSelection').value = window.location.pathname.split('/')[3]; 
         // clock
         function showTime() {
             // Create a date object containing current timestamp
@@ -92,5 +173,9 @@
         }
         showTime();
         }
+        document.getElementById('placeSelection').addEventListener('change', function() {
+            var city = this.value;
+            window.location.href = '/en/weather/' + city;
+        });
     </script>
 </body>
