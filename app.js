@@ -20,28 +20,28 @@ const priceMicroservices = new PriceMicroservices(pool);
 const weatherMicroservices = new WeatherMicroservices(pool);
 
 var Handlebars = require('handlebars');
-Handlebars.registerHelper('formatDate', function(dateString) {
+Handlebars.registerHelper('formatDate', function(dateString) { // Formats datestr to hh:mm
   var date = new Date(dateString);
   var hours = date.getHours();
-  hours = hours < 10 ? '0'+hours : hours; // Add leading zero to hours
+  hours = hours < 10 ? '0'+hours : hours;
   var minutes = date.getMinutes();
   minutes = minutes < 10 ? '0'+minutes : minutes;
   var strTime = hours + ':' + minutes;
   return strTime;
 });
-Handlebars.registerHelper('formatHour', function(dateString) {
+Handlebars.registerHelper('formatHour', function(dateString) { // Formats hour to hh:mm
   var hour = dateString + ':00';
-  var hours = hour < 10 ? '0'+ hour : hour; // Add leading zero to hours
+  var hours = hour < 10 ? '0'+ hour : hour;
   return hours;
 });
-Handlebars.registerHelper('format1Decimal', function(number) {
+Handlebars.registerHelper('format1Decimal', function(number) { // Formats num to 1 decimal
   var num = parseFloat(number).toFixed(1);
   return num;
 });
 Handlebars.registerHelper('json', function(context) {
   return JSON.stringify(context);
 });
-Handlebars.registerHelper('formatWindDegrees', function(degrees) {
+Handlebars.registerHelper('formatWindDegrees', function(degrees) { // Formats wind degrees to direction
   var deg = degrees;
   if (deg == 0) {
     return 'N';
@@ -63,7 +63,7 @@ Handlebars.registerHelper('formatWindDegrees', function(degrees) {
     return 'N';
   }
 });
-Handlebars.registerHelper('formatDayName', function(timestamp) {
+Handlebars.registerHelper('formatDayName', function(timestamp) { // Formats timestamp to day name (short)
   var date = new Date(timestamp);
   var day = date.toLocaleDateString(date.getDay(), { weekday: 'short' });
   return day;
