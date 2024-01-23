@@ -120,8 +120,7 @@ app.get('/:lang/general', async (req, res) => {
     const eveningPriceResult = await priceMicroservices.selectXFromY('price', 'evening_price_today')
     const lowestPriceTodayResult = await priceMicroservices.selectXFromY('*', 'lowest_price_today')
     const highestPriceTodayResult = await priceMicroservices.selectXFromY('*', 'highest_price_today')
-    const TemperatureResult = await weatherMicroservices.selectXFromY('temperature', 'current_weather_forecast')
-    const WindResult = await weatherMicroservices.selectXFromY('wind_direction, wind_speed', 'current_weather_forecast')
+    const weatherResult = await weatherMicroservices.selectXFromY('*', 'now_weather_helsinki')
     
     let priceNow = priceResult.rows[0]['price'];
     let priceEvening = eveningPriceResult.rows[0]['price'];
@@ -131,9 +130,7 @@ app.get('/:lang/general', async (req, res) => {
     let highestPriceTodayTimeslot = highestPriceTodayResult.rows[0]['timeslot'];
     let tableData = tableResult.rows;
     let averagePriceToday = averagePriceTodayResult.rows[0]['average'];
-    let temperature = TemperatureResult.rows[0]['temperature'];
-    let windDirection = WindResult.rows[0]['wind_direction'];
-    let windSpeed = parseFloat(WindResult.rows[0]['wind_speed']).toFixed(2);
+    let weatherNow = weatherResult.rows;
     
     let data = {
       'priceNow': priceNow,
@@ -144,9 +141,7 @@ app.get('/:lang/general', async (req, res) => {
       'highestPriceTodayTimeslot': highestPriceTodayTimeslot,
       'tableData': tableData,
       'averagePriceToday': averagePriceToday,
-      'temperature': temperature,
-      'windDirection': windDirection,
-      'windSpeed': windSpeed,
+      'weather': weatherNow,
       'layout': `../${lang}/layouts/main`
     };
     res.render(`${lang}/general`, data);
