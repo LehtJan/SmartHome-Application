@@ -20,17 +20,53 @@ const priceMicroservices = new PriceMicroservices(pool);
 const weatherMicroservices = new WeatherMicroservices(pool);
 
 var Handlebars = require('handlebars');
-Handlebars.registerHelper('formatDate', function(dateString) {
+Handlebars.registerHelper('formatDate', function(dateString) { // Formats datestr to hh:mm
   var date = new Date(dateString);
   var hours = date.getHours();
-  hours = hours < 10 ? '0'+hours : hours; // Add leading zero to hours
+  hours = hours < 10 ? '0'+hours : hours;
   var minutes = date.getMinutes();
   minutes = minutes < 10 ? '0'+minutes : minutes;
   var strTime = hours + ':' + minutes;
   return strTime;
 });
+Handlebars.registerHelper('formatHour', function(dateString) { // Formats hour to hh:mm
+  var hour = dateString + ':00';
+  var hours = hour < 10 ? '0'+ hour : hour;
+  return hours;
+});
+Handlebars.registerHelper('format1Decimal', function(number) { // Formats num to 1 decimal
+  var num = parseFloat(number).toFixed(1);
+  return num;
+});
 Handlebars.registerHelper('json', function(context) {
   return JSON.stringify(context);
+});
+Handlebars.registerHelper('formatWindDegrees', function(degrees) { // Formats wind degrees to direction
+  var deg = degrees;
+  if (deg == 0) {
+    return 'N';
+  } else if (deg > 0 && deg < 90) {
+    return 'NE';
+  } else if (deg == 90) {
+    return 'E';
+  } else if (deg > 90 && deg < 180) {
+    return 'SE';
+  } else if (deg == 180) {
+    return 'S';
+  } else if (deg > 180 && deg < 270) {
+    return 'SW';
+  } else if (deg == 270) {
+    return 'W';
+  } else if (deg > 270 && deg < 360) {
+    return 'NW';
+  } else if (deg == 360) {
+    return 'N';
+  }
+});
+Handlebars.registerHelper('formatDayName', function(timestamp) { // Formats timestamp to day name (short)
+  var date = new Date(timestamp);
+  var day = date.toLocaleDateString(date.getDay(), { weekday: 'short' });
+  return day;
 });
 
 // EXPRESS-SOVELLUKSEN ASETUKSET
@@ -184,6 +220,31 @@ app.get('/:lang/spot-prices', async (req, res) => {
     console.error(err.message);
   }
 });
+app.get('/:lang/weather', async (req, res) => {
+  const lang = req.params.lang;
+  res.redirect(`/${lang}/weather/Helsinki`)
+});
+app.get('/:lang/weather/:city', async (req, res) => {
+  try {
+    const lang = req.params.lang;
+    let city = req.params.city;
+    if (city == "jyväskylä") {
+      city = "jyvaskyla";
+    }
+    const todayResult = await weatherMicroservices.selectXFromY('*', `today_${city}`)
+    const nowWeatherResult = await weatherMicroservices.selectXFromY('*', `now_weather_${city}`)
+    const nextDaysResult = await weatherMicroservices.selectXFromY('*', `next_days_${city}`)
+    let data = {
+      'today': todayResult.rows,
+      'nowWeather': nowWeatherResult.rows,
+      'nextDays': nextDaysResult.rows,
+      'layout': `../${lang}/layouts/main`
+    };
+    res.render(`${lang}/weather`, data);
+  } catch (err) {
+    console.error(err.message);
+  }
+})
 
 // START SERVER
 // --------------------
