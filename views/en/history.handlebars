@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <!-- main container -->
+    <div class="bg-white flex w-full h-full">
+        <!-- main content -->
+        <div class="bg-[#EAF0FD] w-full h-full px-1 lg:px-4 xl:px-12 2xl:px-36 lg:py-4 py-2">
+            <!-- top content -->
+            <div class="w-full flex justify-end">
+                <h1 id="clock" class="text-[#19283F] text-xl flex items-center justify-end mr-2 sm:mr-none">
+                </h1>
+            </div>
+
+            <!-- middle content -->
+            <div class="flex-col mt-10 pb-28">
+                <h1 class="font-bold text-[22px]">History Data</h1>
+                <h1 class="md:max-w-[50%] mt-3">Here you can see history data for temperature, wind speed and spot-prices, in both chart- and table form. You can download the data as an excel or csv. </h1>
+            
+                <div class="mt-12 flex flex-row">
+                    <div class="bg-white relative inline-flex w-56 mr-2">
+                        <select class="rounded-md shadow-md px-3 py-2 w-full cursor-pointer border border-1" id="timeSelection">
+                            <option value="30days">30 Days</option>
+                            <option value="1year">1 Year</option>
+                            <option value="All">All Possible</option>
+                        </select>
+                    </div>
+                    <div class="bg-white relative inline-flex w-56">
+                        <select class="rounded-md shadow-md px-3 py-2 w-full cursor-pointer border border-1" id="placeSelection">
+                            <option value="Espoo">Espoo</option>
+                            <option value="Helsinki">Helsinki</option>
+                            <option value="Jyvaskyla">Jyväskylä</option>
+                            <option value="Kuopio">Kuopio</option>
+                            <option value="Oulu">Oulu</option>
+                            <option value="Tampere">Tampere</option>
+                            <option value="Turku">Turku</option>
+                            <option value="Vantaa">Vantaa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-md mt-3 pb-3 sm:py-6 sm:px-12 2xl:px-36">
+                    <!-- Table or Chart selection + Download as -->
+                    <div class="pt-6 w-full grid grid-cols-3">
+                        <!-- Chart or Table -->
+                        <div class="col-start-2 flex justify-center">
+                            <div class="inline-flex rounded-3xl shadow-md p-1 bg-[#4B49AC]" role="group">
+
+                                <!-- Chart -->
+                                <button type="button" id="chartButton" class="bg-[#4B49AC] hover:bg-[#6D6BE2] rounded-l-3xl px-4  text-white">
+                                    Chart
+                                </button>
+
+                                <!-- Table -->
+                                <button type="button" id="tableButton" class="bg-white hover:bg-[#C4C3EA] rounded-r-3xl px-4 text-black">
+                                    Table
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Download as -->
+                        <div id="downloadAs" class="flex  justify-end items-center">
+                            <div class="inline-flex rounded-3xl shadow-md p-1 bg-[#4B49AC]" role="group">
+                                <button id="downloadCSV" type="button" class="bg-[#4B49AC] hover:bg-[#6D6BE2] rounded-l-3xl px-4  text-white">
+                                    CSV
+                                </button>
+                                <button id="downloadExcel" type="button" class="bg-white hover:bg-[#C4C3EA] rounded-r-3xl px-4 text-black">
+                                    Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chart and Table -->
+                    <div class="flex flex-col sm:justify-center sm:items-center mb-6">
+                        <!-- Chart -->
+                        <div id="chart-container" class="w-full h-[500px] sm:h-[600px] pt-6">
+                            <canvas id="history-chart"></canvas>
+                        </div>
+
+                        <!-- Table -->
+                        <div id="table-container" class="hidden">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // clock
+        window.onload = function() {     
+        document.getElementById('placeSelection').value = window.location.pathname.split('/')[3]; 
+        // clock
+        function showTime() {
+            // Create a date object containing current timestamp
+            var date = new Date();
+            // Separate hours, minutes and seconds
+            var h = date.getHours();
+            var m = date.getMinutes();
+            var s = date.getSeconds();
+            // Add leading zeros
+            h = (h < 10) ? "0" + h : h;
+            m = (m < 10) ? "0" + m : m;
+            s = (s < 10) ? "0" + s : s;
+            // Build a string for time and put it into h1 named clock
+            var time = h + "." + m + "." + s;
+            document.getElementById("clock").innerHTML = time;
+            // After 1000 ms (1 s) call showTime again
+            setTimeout(showTime, 1000);
+        }
+        showTime();
+        }
+        // Place dropdown
+        document.getElementById('placeSelection').addEventListener('change', function() {
+            var city = this.value;
+            window.location.href = '/en/history/' + city;
+        });
+    </script>
+</body>

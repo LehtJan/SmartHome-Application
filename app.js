@@ -240,6 +240,29 @@ app.get('/:lang/weather/:city', async (req, res) => {
     console.error(err.message);
   }
 })
+app.get('/:lang/history', async (req, res) => {
+  const lang = req.params.lang;
+  res.redirect(`/${lang}/history/Helsinki`)
+});
+app.get('/:lang/history/:city', async (req, res) => {
+  try {
+    const lang = req.params.lang;
+    let city = req.params.city;
+    if (city == "jyväskylä") {
+      city = "jyvaskyla";
+    } else if (city == "närpiö") {
+      city = "narpio";
+    }
+    const todayResult = await weatherMicroservices.selectXFromY('*', `today_${city}`)
+
+    let data = {
+      'layout': `../${lang}/layouts/main`
+    };
+    res.render(`${lang}/history`, data);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 // START SERVER
 // --------------------
