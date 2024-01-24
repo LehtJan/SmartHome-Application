@@ -348,6 +348,9 @@ weatherMicroservices.fetchWeatherFromCityX('Oulu', 'Oulu');
 weatherMicroservices.fetchWeatherFromCityX('Tampere', 'Tampere');
 weatherMicroservices.fetchWeatherFromCityX('Turku', 'Turku Artukainen');
 weatherMicroservices.fetchWeatherFromCityX('Vantaa', 'Vantaa');
+weatherMicroservices.fetchWeatherFromCityX('Vaasa', 'Vaasa');
+weatherMicroservices.fetchWeatherFromCityX('Närpiö', 'Närpiö');
+weatherMicroservices.fetchWeatherFromCityX('Kalajoki', 'Kalajoki');
 
 // weatherMicroservices.fetchFinGridData();
 // Export the Microservices class

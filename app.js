@@ -225,6 +225,8 @@ app.get('/:lang/weather/:city', async (req, res) => {
     let city = req.params.city;
     if (city == "jyväskylä") {
       city = "jyvaskyla";
+    } else if (city == "närpiö") {
+      city = "narpio";
     }
     const todayResult = await weatherMicroservices.selectXFromY('*', `today_${city}`)
     const nowWeatherResult = await weatherMicroservices.selectXFromY('*', `now_weather_${city}`)
