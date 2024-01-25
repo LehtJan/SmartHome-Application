@@ -41,8 +41,20 @@
                             <option value="Turku">Turku</option>
                             <option value="Vantaa">Vantaa</option>
                         </select>
-                    </div>
+                    </div>SELECT 
+  date(timestamp),
+  AVG(temperature) as temperature,
+  AVG(wind_speed) as wind_speed,
+  AVG(price),
+  place
+FROM 
+  all_weather_forecasts, hourly_prices
+WHERE extract(day from timestamp) < extract(day from now())
+GROUP BY 
+  date(timestamp), place;
                 </div>
+
+
 
                 <div class="bg-white rounded-3xl shadow-md mt-3 pb-3 sm:py-6 sm:px-12 2xl:px-36">
                     <!-- Table or Chart selection + Download as -->
