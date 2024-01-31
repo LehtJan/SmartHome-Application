@@ -152,6 +152,7 @@ app.get('/:lang/general', async (req, res) => {
 app.get('/:lang/spot-prices', async (req, res) => {
   try {
     const lang = req.params.lang;
+    const date = new Date().toLocaleDateString('fi-FI', { timeZone: 'Europe/Helsinki' });
     const priceResult = await priceMicroservices.selectXFromY('*', 'hourly_page') // Price now AND hourly table data (from now forward)
     const averagePriceTodayResult = await priceMicroservices.selectXFromY('average', 'average_price_today') // Average price today
     const highestPriceTodayResult = await priceMicroservices.selectXFromY('*', 'highest_price_today') // Highest price today
@@ -165,7 +166,8 @@ app.get('/:lang/spot-prices', async (req, res) => {
     const pricesThisMonthAverageResult = await priceMicroservices.selectXFromY('average_price', 'prices_this_month_average') // Average this month
     const pricesThisYearMonthlyResult = await priceMicroservices.selectXFromY('*', 'prices_this_year_monthly') // Prices this year, in monthly form (full)
     const pricesThisYearAverageResult = await priceMicroservices.selectXFromY('average_price', 'prices_this_year_average') // Average this year
-
+    const priceNowComparison = await priceMicroservices.selectXFromY('*', 'price_now_comparison_yesterday') // Price now comparison
+    
     let priceNow = priceResult.rows[0]['price'];
     let tableData = priceResult.rows;
     let averagePriceToday = averagePriceTodayResult.rows[0]['average'];
@@ -186,8 +188,32 @@ app.get('/:lang/spot-prices', async (req, res) => {
     let pricesThisMonthAverage = pricesThisMonthAverageResult.rows[0]['average_price'];
     let pricesThisYearMonthly = pricesThisYearMonthlyResult.rows;
     let pricesThisYearAverage = pricesThisYearAverageResult.rows[0]['average_price'];
+    let consideredPrice = priceResult.rows[0]['price'];
+    if (consideredPrice < 4 && consideredPrice > 1) {
+      consideredPrice = 'quite low'
+    } else if (consideredPrice < 1) {
+      consideredPrice = 'very low'
+    } else if (consideredPrice > 4 && consideredPrice < 6) {
+      consideredPrice = 'medium'
+    } else if (consideredPrice > 6 && consideredPrice < 10) {
+      consideredPrice = 'quite high'
+    } else if (consideredPrice > 10) {
+      consideredPrice = 'high'
+    }
+    let priceNowComparisonResult = priceNowComparison.rows[0]['price'];
+    let priceYesterdayComparisonResult = priceNowComparison.rows[1]['price'];
+    let priceHigherOrLower = '';
+    if (priceNowComparisonResult > priceYesterdayComparisonResult) {
+      priceHigherOrLower = 'higher';
+    } else if (priceNowComparisonResult < priceYesterdayComparisonResult) {
+      priceHigherOrLower = 'lower';
+    } else {
+      priceHigherOrLower = 'same';
+    }
+
 
     let data = {
+      'dateToday': date,
       'priceNow': priceNow,
       'averagePriceToday': averagePriceToday,
       'highestPriceToday': highestPriceToday,
@@ -208,6 +234,8 @@ app.get('/:lang/spot-prices', async (req, res) => {
       'pricesThisMonthAverage': pricesThisMonthAverage,
       'pricesThisYearMonthly': pricesThisYearMonthly,
       'pricesThisYearAverage': pricesThisYearAverage,
+      'consideredPrice': consideredPrice,
+      'priceNowComparison': priceHigherOrLower,
       'layout': `../${lang}/layouts/main`
     };
     res.render(`${lang}/spot_prices`, data);
