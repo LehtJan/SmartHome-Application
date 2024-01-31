@@ -208,7 +208,7 @@ app.get('/:lang/spot-prices', async (req, res) => {
     } else if (priceNowComparisonResult < priceYesterdayComparisonResult) {
       priceHigherOrLower = 'lower';
     } else {
-      priceHigherOrLower = 'same';
+      priceHigherOrLower = 'the same';
     }
 
 
