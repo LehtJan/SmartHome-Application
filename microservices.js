@@ -114,14 +114,12 @@ class WeatherMicroservices {
     return resultset;
   }
   async fetchAndCalculateWindData(uVectorData, vVectorData) {
-    // Reset all values
     let windAngle = 0; // Wind blows from opposite direction to vector
     let windSpeed = 0; // Wind speed in vector units (m/s)
     let geographicAngle = 0; // Angle of vector in a map
   
-    // atan2 returns angle in radians. Arguments are in (y,x) order!
-    let xyAngleRad = Math.atan2(vVectorData, uVectorData);
-    let xyAngleDeg = xyAngleRad * 360 /(2 * Math.PI); // convert radians to degrees
+    let xyAngleRad = Math.atan2(vVectorData, uVectorData); // Arguments are in (y,x) order!
+    let xyAngleDeg = xyAngleRad * 360 /(2 * Math.PI); // Convert radians to degrees
     
     // Convert x-y plane directions to geographic directions
     // There is 90 degrees shift between x-y and map directions
