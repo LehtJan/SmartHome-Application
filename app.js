@@ -34,6 +34,17 @@ Handlebars.registerHelper('formatHour', function(dateString) { // Formats hour t
   var hours = hour < 10 ? '0'+ hour : hour;
   return hours;
 });
+Handlebars.registerHelper('formatDayName', function(timestamp) { // Formats timestamp to day name (short)
+  var date = new Date(timestamp);
+  var day = date.toLocaleDateString(date.getDay(), { weekday: 'short' });
+  return day;
+});
+
+Handlebars.registerHelper('formatDateShort', function(timestamp) {
+  var date = new Date(timestamp);
+  var day = date.toLocaleDateString('fi-FI', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  return day;
+});
 Handlebars.registerHelper('format1Decimal', function(number) { // Formats num to 1 decimal
   var num = parseFloat(number).toFixed(1);
   return num;
@@ -63,11 +74,7 @@ Handlebars.registerHelper('formatWindDegrees', function(degrees) { // Formats wi
     return 'N';
   }
 });
-Handlebars.registerHelper('formatDayName', function(timestamp) { // Formats timestamp to day name (short)
-  var date = new Date(timestamp);
-  var day = date.toLocaleDateString(date.getDay(), { weekday: 'short' });
-  return day;
-});
+
 
 // EXPRESS-SOVELLUKSEN ASETUKSET
 // -----------------------------
@@ -270,6 +277,30 @@ app.get('/:lang/weather/:city', async (req, res) => {
     console.error(err.message);
   }
 })
+app.get('/:lang/history', async (req, res) => {
+  const lang = req.params.lang;
+  res.redirect(`/${lang}/history/Helsinki`)
+});
+app.get('/:lang/history/:city', async (req, res) => {
+  try {
+    const lang = req.params.lang;
+    let city = req.params.city;
+    if (city == "jyväskylä") {
+      city = "jyvaskyla";
+    } else if (city == "närpiö") {
+      city = "narpio";
+    }
+    const allWeatherHistory = await weatherMicroservices.selectXFromY('*', `all_weather_history_${city}`)
+
+    let data = {
+      'allWeatherHistory': allWeatherHistory.rows,
+      'layout': `../${lang}/layouts/main`
+    };
+    res.render(`${lang}/history`, data);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 // START SERVER
 // --------------------
