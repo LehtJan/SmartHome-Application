@@ -20,13 +20,11 @@
             <!-- middle content -->
             <div class="flex-col mt-10 pb-28">
                 <h1 class="font-bold text-[22px]">History Data</h1>
-                <h1 class="md:max-w-[50%] mt-3">Here you can see history data for temperature, wind speed and spot-prices, in both chart- and table form. You can download the data as an excel or csv. </h1>
+                <h1 class="md:max-w-[50%] mt-3">Here you can see history data for temperature, wind speed and spot-prices. Currently you can only sort data by "all possible", more options will be added in the future.</h1>
             
                 <div class="mt-12 flex flex-row">
                     <div class="bg-white relative inline-flex w-56 mr-2">
                         <select class="rounded-md shadow-md px-3 py-2 w-full cursor-pointer border border-1" id="timeSelection">
-                            <option value="30days">30 Days</option>
-                            <option value="1year">1 Year</option>
                             <option value="All">All Possible</option>
                         </select>
                     </div>
@@ -35,67 +33,41 @@
                             <option value="Espoo">Espoo</option>
                             <option value="Helsinki">Helsinki</option>
                             <option value="Jyvaskyla">Jyväskylä</option>
+                            <option value="Kalajoki">Kalajoki</option>
                             <option value="Kuopio">Kuopio</option>
+                            <option value="Narpio">Närpiö</option>
                             <option value="Oulu">Oulu</option>
                             <option value="Tampere">Tampere</option>
                             <option value="Turku">Turku</option>
+                            <option value="Vaasa">Vaasa</option>
                             <option value="Vantaa">Vantaa</option>
                         </select>
-                    </div>SELECT 
-  date(timestamp),
-  AVG(temperature) as temperature,
-  AVG(wind_speed) as wind_speed,
-  AVG(price),
-  place
-FROM 
-  all_weather_forecasts, hourly_prices
-WHERE extract(day from timestamp) < extract(day from now())
-GROUP BY 
-  date(timestamp), place;
+                    </div>
                 </div>
 
-
-
                 <div class="bg-white rounded-3xl shadow-md mt-3 pb-3 sm:py-6 sm:px-12 2xl:px-36">
-                    <!-- Table or Chart selection + Download as -->
-                    <div class="pt-6 w-full grid grid-cols-3">
-                        <!-- Chart or Table -->
-                        <div class="col-start-2 flex justify-center">
-                            <div class="inline-flex rounded-3xl shadow-md p-1 bg-[#4B49AC]" role="group">
-
-                                <!-- Chart -->
-                                <button type="button" id="chartButton" class="bg-[#4B49AC] hover:bg-[#6D6BE2] rounded-l-3xl px-4  text-white">
-                                    Chart
-                                </button>
-
-                                <!-- Table -->
-                                <button type="button" id="tableButton" class="bg-white hover:bg-[#C4C3EA] rounded-r-3xl px-4 text-black">
-                                    Table
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Download as -->
-                        <div id="downloadAs" class="flex  justify-end items-center">
-                            <div class="inline-flex rounded-3xl shadow-md p-1 bg-[#4B49AC]" role="group">
-                                <button id="downloadCSV" type="button" class="bg-[#4B49AC] hover:bg-[#6D6BE2] rounded-l-3xl px-4  text-white">
-                                    CSV
-                                </button>
-                                <button id="downloadExcel" type="button" class="bg-white hover:bg-[#C4C3EA] rounded-r-3xl px-4 text-black">
-                                    Excel
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                     <!-- Chart and Table -->
                     <div class="flex flex-col sm:justify-center sm:items-center mb-6">
-                        <!-- Chart -->
-                        <div id="chart-container" class="w-full h-[500px] sm:h-[600px] pt-6">
-                            <canvas id="history-chart"></canvas>
-                        </div>
-
-                        <!-- Table -->
-                        <div id="table-container" class="hidden">
-                        </div>
+                        <table class="w-full sm:w-[700px] h-[500px] bg-red-200 sm:h-[600px] text-center text-black text-lg font-semibold shadow-md mt-6">
+                            <thead class="bg-[#4B49AC] text-white px-4 py-2 my-2 border-[1px] border-[#4B49AC]">
+                                <tr>
+                                <th>Date</th>
+                                <th>Price snt/kWh</th>
+                                <th>Temperature</th>
+                                <th>Wind Speed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each allWeatherHistory}}
+                                <tr class="bg-white border-[1px] border-[#4B49AC]">
+                                    <td>{{formatDateShort this.date}}</td>
+                                    <td>{{format1Decimal this.price}}</td>
+                                    <td>{{format1Decimal this.temperature}}</td>
+                                    <td>{{format1Decimal this.wind_speed}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
