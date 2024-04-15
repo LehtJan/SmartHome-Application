@@ -34,6 +34,17 @@ Handlebars.registerHelper('formatHour', function(dateString) { // Formats hour t
   var hours = hour < 10 ? '0'+ hour : hour;
   return hours;
 });
+Handlebars.registerHelper('formatDayName', function(timestamp) { // Formats timestamp to day name (short)
+  var date = new Date(timestamp);
+  var day = date.toLocaleDateString(date.getDay(), { weekday: 'short' });
+  return day;
+});
+
+Handlebars.registerHelper('formatDateShort', function(timestamp) {
+  var date = new Date(timestamp);
+  var day = date.toLocaleDateString('fi-FI', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  return day;
+});
 Handlebars.registerHelper('format1Decimal', function(number) { // Formats num to 1 decimal
   var num = parseFloat(number).toFixed(1);
   return num;
@@ -63,11 +74,7 @@ Handlebars.registerHelper('formatWindDegrees', function(degrees) { // Formats wi
     return 'N';
   }
 });
-Handlebars.registerHelper('formatDayName', function(timestamp) { // Formats timestamp to day name (short)
-  var date = new Date(timestamp);
-  var day = date.toLocaleDateString(date.getDay(), { weekday: 'short' });
-  return day;
-});
+
 
 // EXPRESS-SOVELLUKSEN ASETUKSET
 // -----------------------------
@@ -120,8 +127,7 @@ app.get('/:lang/general', async (req, res) => {
     const eveningPriceResult = await priceMicroservices.selectXFromY('price', 'evening_price_today')
     const lowestPriceTodayResult = await priceMicroservices.selectXFromY('*', 'lowest_price_today')
     const highestPriceTodayResult = await priceMicroservices.selectXFromY('*', 'highest_price_today')
-    const TemperatureResult = await weatherMicroservices.selectXFromY('temperature', 'current_weather_forecast')
-    const WindResult = await weatherMicroservices.selectXFromY('wind_direction, wind_speed', 'current_weather_forecast')
+    const weatherResult = await weatherMicroservices.selectXFromY('*', 'now_weather_helsinki')
     
     let priceNow = priceResult.rows[0]['price'];
     let priceEvening = eveningPriceResult.rows[0]['price'];
@@ -131,9 +137,7 @@ app.get('/:lang/general', async (req, res) => {
     let highestPriceTodayTimeslot = highestPriceTodayResult.rows[0]['timeslot'];
     let tableData = tableResult.rows;
     let averagePriceToday = averagePriceTodayResult.rows[0]['average'];
-    let temperature = TemperatureResult.rows[0]['temperature'];
-    let windDirection = WindResult.rows[0]['wind_direction'];
-    let windSpeed = parseFloat(WindResult.rows[0]['wind_speed']).toFixed(2);
+    let weatherNow = weatherResult.rows;
     
     let data = {
       'priceNow': priceNow,
@@ -144,9 +148,7 @@ app.get('/:lang/general', async (req, res) => {
       'highestPriceTodayTimeslot': highestPriceTodayTimeslot,
       'tableData': tableData,
       'averagePriceToday': averagePriceToday,
-      'temperature': temperature,
-      'windDirection': windDirection,
-      'windSpeed': windSpeed,
+      'weather': weatherNow,
       'layout': `../${lang}/layouts/main`
     };
     res.render(`${lang}/general`, data);
@@ -157,6 +159,7 @@ app.get('/:lang/general', async (req, res) => {
 app.get('/:lang/spot-prices', async (req, res) => {
   try {
     const lang = req.params.lang;
+    const date = new Date().toLocaleDateString('fi-FI', { timeZone: 'Europe/Helsinki' });
     const priceResult = await priceMicroservices.selectXFromY('*', 'hourly_page') // Price now AND hourly table data (from now forward)
     const averagePriceTodayResult = await priceMicroservices.selectXFromY('average', 'average_price_today') // Average price today
     const highestPriceTodayResult = await priceMicroservices.selectXFromY('*', 'highest_price_today') // Highest price today
@@ -170,7 +173,8 @@ app.get('/:lang/spot-prices', async (req, res) => {
     const pricesThisMonthAverageResult = await priceMicroservices.selectXFromY('average_price', 'prices_this_month_average') // Average this month
     const pricesThisYearMonthlyResult = await priceMicroservices.selectXFromY('*', 'prices_this_year_monthly') // Prices this year, in monthly form (full)
     const pricesThisYearAverageResult = await priceMicroservices.selectXFromY('average_price', 'prices_this_year_average') // Average this year
-
+    const priceNowComparison = await priceMicroservices.selectXFromY('*', 'price_now_comparison_yesterday') // Price now comparison
+    
     let priceNow = priceResult.rows[0]['price'];
     let tableData = priceResult.rows;
     let averagePriceToday = averagePriceTodayResult.rows[0]['average'];
@@ -191,8 +195,32 @@ app.get('/:lang/spot-prices', async (req, res) => {
     let pricesThisMonthAverage = pricesThisMonthAverageResult.rows[0]['average_price'];
     let pricesThisYearMonthly = pricesThisYearMonthlyResult.rows;
     let pricesThisYearAverage = pricesThisYearAverageResult.rows[0]['average_price'];
+    let consideredPrice = priceResult.rows[0]['price'];
+    if (consideredPrice < 4 && consideredPrice > 1) {
+      consideredPrice = 'quite low'
+    } else if (consideredPrice < 1) {
+      consideredPrice = 'very low'
+    } else if (consideredPrice > 4 && consideredPrice < 6) {
+      consideredPrice = 'medium'
+    } else if (consideredPrice > 6 && consideredPrice < 10) {
+      consideredPrice = 'quite high'
+    } else if (consideredPrice > 10) {
+      consideredPrice = 'high'
+    }
+    let priceNowComparisonResult = priceNowComparison.rows[0]['price'];
+    let priceYesterdayComparisonResult = priceNowComparison.rows[1]['price'];
+    let priceHigherOrLower = '';
+    if (priceNowComparisonResult > priceYesterdayComparisonResult) {
+      priceHigherOrLower = 'higher';
+    } else if (priceNowComparisonResult < priceYesterdayComparisonResult) {
+      priceHigherOrLower = 'lower';
+    } else {
+      priceHigherOrLower = 'the same';
+    }
+
 
     let data = {
+      'dateToday': date,
       'priceNow': priceNow,
       'averagePriceToday': averagePriceToday,
       'highestPriceToday': highestPriceToday,
@@ -213,6 +241,8 @@ app.get('/:lang/spot-prices', async (req, res) => {
       'pricesThisMonthAverage': pricesThisMonthAverage,
       'pricesThisYearMonthly': pricesThisYearMonthly,
       'pricesThisYearAverage': pricesThisYearAverage,
+      'consideredPrice': consideredPrice,
+      'priceNowComparison': priceHigherOrLower,
       'layout': `../${lang}/layouts/main`
     };
     res.render(`${lang}/spot_prices`, data);
@@ -230,6 +260,8 @@ app.get('/:lang/weather/:city', async (req, res) => {
     let city = req.params.city;
     if (city == "jyväskylä") {
       city = "jyvaskyla";
+    } else if (city == "närpiö") {
+      city = "narpio";
     }
     const todayResult = await weatherMicroservices.selectXFromY('*', `today_${city}`)
     const nowWeatherResult = await weatherMicroservices.selectXFromY('*', `now_weather_${city}`)
@@ -245,6 +277,40 @@ app.get('/:lang/weather/:city', async (req, res) => {
     console.error(err.message);
   }
 })
+app.get('/:lang/history', async (req, res) => {
+  const lang = req.params.lang;
+  res.redirect(`/${lang}/history/Helsinki`)
+});
+app.get('/:lang/history/:city', async (req, res) => {
+  try {
+    const lang = req.params.lang;
+    let city = req.params.city;
+    if (city == "jyväskylä") {
+      city = "jyvaskyla";
+    } else if (city == "närpiö") {
+      city = "narpio";
+    }
+    const allWeatherHistory = await weatherMicroservices.selectXFromY('*', `all_weather_history_${city}`)
+
+    let data = {
+      'allWeatherHistory': allWeatherHistory.rows,
+      'layout': `../${lang}/layouts/main`
+    };
+    res.render(`${lang}/history`, data);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+app.get('/:lang/ai', async (req, res) => {
+  const lang = req.params.lang;
+
+  let data = {
+    'layout': `../${lang}/layouts/main`
+  };
+  res.render(`${lang}/ai`, data);
+}
+);
 
 // START SERVER
 // --------------------

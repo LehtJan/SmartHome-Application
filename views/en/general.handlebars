@@ -23,11 +23,11 @@
             <div class="grid xl:grid-cols-3 grid-cols-1 xl:grid-rows-1 grid-rows-2 xl:gap-x-7 xl:gap-y-none gap-y-6 xl:pt-6 xl:pb-none pb-6 mt-6">
 
                 <!-- left chart -->
-                <div class="col-span-2 bg-[#EAF0FD] w-full h-full rounded-3xl">
-                    <h1 class="font-medium text-[22px]">
+                <div class="col-span-2 bg-white w-full h-76 shadow-md rounded-3xl flex flex-col items-center">
+                    <h1 class="font-medium text-[22px] self-start mt-6 ml-6">
                         Hourly Prices <span class="font-semibold text-lg text-gray-700">(snt/kWh)</span>
                     </h1>
-                     <canvas class="max-h-[90%]" id="hourlyChartChartJS"></canvas>
+                    <canvas class="max-h-[80%] max-w-[90%]" id="hourlyChartChartJS"></canvas>
                    <script>
                         const xValues = [];
                         const yValues = [];
@@ -119,9 +119,9 @@
                         </div>
 
                         <!-- price now -->
-                        <div class="bg-gray-700 rounded-3xl flex items-center justify-center h-full">
+                        <div class="bg-white rounded-3xl flex items-center justify-center h-full">
                             <div class="flex items-center justify-center">
-                                <h1 class="text-4xl sm:text-5xl text-right text-white font-semibold">
+                                <h1 class="text-4xl sm:text-5xl text-right text-gray-700 font-semibold">
                                     {{priceNow}}
                                 </h1>
                             </div>
@@ -161,7 +161,7 @@
                 
                 <!-- left content -->
                 <a href="/en/weather" class="hover:-translate-y-1 hover:scale-100 transition ease-in-out duration-300 ">
-                    <div class="bg-[#FCF5E5] bg-cover bg-top bg-no-repeat w-full h-full flex grid grid-cols-1 grid-rows-3 gap-y-4 rounded-3xl sm:p-8 p-3 shadow-md">
+                    <div class="bg-[#98BDFF] bg-cover bg-top bg-no-repeat w-full h-full flex grid grid-cols-1 grid-rows-3 gap-y-4 rounded-3xl sm:p-8 p-3 shadow-md">
 
                     <!-- title -->
                         <div class="grid grid-cols-2 grid-rows-1">
@@ -169,11 +169,7 @@
                                 <img src="/icons/cloudy-orange.png" alt="logo" class="w-[40px] h-[40px] bg-white rounded-full p-1">
                                 <div class="ml-4">
                                     <h1 class="sm:text-2xl font-medium text-[22px]">
-                                        Current Weather
-                                        <span class="font-semibold text-lg text-gray-700">
-                                            <br>
-                                            (°C)
-                                        </span>
+                                        Current Weather, Helsinki
                                     </h1>
                                 </div>
                             </div>
@@ -183,7 +179,9 @@
                         <div class="bg-white p-2 rounded-3xl flex items-center justify-center h-full w-[45%]">
                             <div class="flex items-center justify-center">
                                 <h1 class="text-4xl sm:text-5xl text-right font-semibold text-gray-700">
-                                    {{temperature}}°C
+                                    {{#each weather}}
+                                        {{this.temperature}}°C
+                                    {{/each}}
                                 </h1>
                             </div>
                         </div>
@@ -196,23 +194,29 @@
                                     Wind Speed
                                 </h1>
                                 <h1 class="sm:text-2xl text-xl">
-                                    {{windSpeed}}m/s
+                                    {{#each weather}}
+                                        {{format1Decimal this.wind_speed}}m/s
+                                    {{/each}}
                                 </h1>
                             </div>
                             <div class="bg-[#fbaa6f] rounded-3xl w-full h-full flex justify-top items-center flex-col text-black px-1 sm:py-2 py-4">
                                 <h1 class="text-sm sm:text-md">
-                                    Rain
+                                    Humidity
                                 </h1>
                                 <h1 class="sm:text-2xl text-xl">
-                                    2.2 mm
+                                    {{#each weather}}
+                                        {{this.humidity}}%
+                                    {{/each}}
                                 </h1>
                             </div>
                             <div class="bg-white rounded-3xl w-full h-full flex justify-top items-center flex-col px-1  sm:py-2 py-4">
                                 <h1 class="text-gray-700 text-sm sm:text-md">
-                                    Cloud coverage
+                                    Precipitation
                                 </h1>
                                 <h1 class="sm:text-2xl text-lg text-gray-700">
-                                    Cloudy (8/8)
+                                    {{#each weather}}
+                                        {{this.precipitation1h}}mm
+                                    {{/each}}
                                 </h1>
                             </div>
                             

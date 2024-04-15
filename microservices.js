@@ -329,6 +329,7 @@ class WeatherMicroservices {
         });
       } catch (error) {
         console.error(`Error: ${error}`);
+        console.log(error.response.data);
       }
     }, null, true, 'Europe/Helsinki');
   }
@@ -343,11 +344,14 @@ weatherMicroservices.scheduleTemplateObservation('Temperature', 'Turku', 't2m', 
 weatherMicroservices.fetchWeatherFromCityX('Espoo', 'Espoo');
 weatherMicroservices.fetchWeatherFromCityX('Helsinki', 'Helsinki');
 weatherMicroservices.fetchWeatherFromCityX('Jyväskylä', 'Jyväskylä');
+weatherMicroservices.fetchWeatherFromCityX('Kalajoki', 'Kalajoki');
 weatherMicroservices.fetchWeatherFromCityX('Kuopio', 'Kuopio');
+weatherMicroservices.fetchWeatherFromCityX('Närpiö', 'Närpiö');
 weatherMicroservices.fetchWeatherFromCityX('Oulu', 'Oulu');
 weatherMicroservices.fetchWeatherFromCityX('Tampere', 'Tampere');
 weatherMicroservices.fetchWeatherFromCityX('Turku', 'Turku Artukainen');
 weatherMicroservices.fetchWeatherFromCityX('Vantaa', 'Vantaa');
+weatherMicroservices.fetchWeatherFromCityX('Vaasa', 'Vaasa');
 
 // weatherMicroservices.fetchFinGridData();
 // Export the Microservices class

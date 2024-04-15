@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
     <!-- main container -->
@@ -22,10 +20,13 @@
                             <option value="Espoo">Espoo</option>
                             <option value="Helsinki">Helsinki</option>
                             <option value="Jyvaskyla">Jyväskylä</option>
+                            <option value="Kalajoki">Kalajoki</option>
                             <option value="Kuopio">Kuopio</option>
+                            <option value="Narpio">Närpiö</option>
                             <option value="Oulu">Oulu</option>
                             <option value="Tampere">Tampere</option>
                             <option value="Turku">Turku</option>
+                            <option value="Vaasa">Vaasa</option>
                             <option value="Vantaa">Vantaa</option>
                         </select>
                     </div>
@@ -35,7 +36,7 @@
             </div>
 
             <!-- middle content -->
-            <div class="flex flex-col lg:flex-row mt-10 pb-28">
+            <div class="flex flex-col lg:flex-row mt-10 pb-2">
 
                 <!-- Today -->
                 <div class="flex-col lg:w-3/5">
@@ -58,7 +59,7 @@
                     </div>
 
                     <!-- Today Hourly -->
-                    <div class="mx-2 mb-6 px-6 pt-6 pb-3 bg-white rounded-3xl shadow-md">
+                    <div class="mx-2 mb-6 px-6 pt-6 pb-3 bg-white rounded-3xl shadow-md hover:-translate-y-1 hover:scale-100 transition ease-in-out duration-300">
                         <div class="flex text-center overflow-x-auto scrolling-touch pb-3">
                             <!-- Hourly Cards -->
                             {{#each today}}
@@ -81,7 +82,7 @@
                     </div>
 
                     <!-- Today Conditions -->
-                    <div class="mx-2 px-6 py-6 bg-white rounded-3xl shadow-md">
+                    <div class="mx-2 px-6 py-6 bg-white rounded-3xl shadow-md hover:-translate-y-1 hover:scale-100 transition ease-in-out duration-300">
                         <h1 class="font-bold text-xl mb-6">Weather Conditions Now</h1>
 
                         <div class="flex flex-col sm:flex-row justify-between">
@@ -129,7 +130,7 @@
                 </div>
 
                 <!-- Next Days / Every Other Hour -->
-                <div class="flex-col bg-white rounded-3xl shadow-md lg:ml-6 mt-6 lg:mt-0 py-6 pl-6 lg:w-2/5 h-[625px]">
+                <div class="flex-col bg-white rounded-3xl shadow-md lg:ml-6 mt-6 lg:mt-0 py-6 pl-6 lg:w-2/5 h-[625px] hover:-translate-y-1 hover:scale-100 transition ease-in-out duration-300">
                     <h1 class="font-bold text-xl mb-6">Weather Forecast</h1>
                     <div class="overflow-y-auto scrolling-touch h-[90%]">
                         {{#each nextDays}}
@@ -146,6 +147,8 @@
                     </div>
                 </div>
             </div>
+            <h1 class="mt-10 max-w-[600px]">If some data does not show up or the squares look empty, this means that we haven't yet gotten the necessary data, and it should instead appear in the next hour.
+            </h1>
         </div>
     </div>
 
