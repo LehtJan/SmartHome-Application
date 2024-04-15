@@ -302,6 +302,16 @@ app.get('/:lang/history/:city', async (req, res) => {
   }
 });
 
+app.get('/:lang/ai', async (req, res) => {
+  const lang = req.params.lang;
+
+  let data = {
+    'layout': `../${lang}/layouts/main`
+  };
+  res.render(`${lang}/ai`, data);
+}
+);
+
 // START SERVER
 // --------------------
 app.listen(PORT)
